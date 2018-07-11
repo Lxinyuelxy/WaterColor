@@ -1,29 +1,27 @@
 int strokeWidth = 80;
-//float projection_r = 12;
-//float projection_angle = PI / 4.0;
 
 void setup(){
-  size(960, 480);
+  size(640, 400);
+  background(255, 230, 230);
   noLoop();
 }
 
 void draw() {
-  background(255);
-  ArrayList<PVector> basePoints = getPolygon(width/2, height/2, 10);
+  ArrayList<PVector> basePoints = getPolygon(width/2-30, height/2-40, 10);
   ArrayList<PVector> basePoints1  = getBasePolygon(basePoints, 1);
   ArrayList<PVector> basePoints2  = getBasePolygon(basePoints1, 2);
   ArrayList<PVector> basePoints3  = getBasePolygon(basePoints2, 3);
   
-  for(int i = 0; i < 80; i++) {
+  for(int layer = 0; layer < 100; layer++) {
     ArrayList<PVector> points;
-    if(i > 33) {
-      points  = getBasePolygon(basePoints1, 4);
+    if(layer > 33) {
+      points  = getBasePolygon(basePoints1, 3);
     }
-    else if(i > 66) {
-      points = getBasePolygon(basePoints2, 4);
+    else if(layer > 66) {
+      points = getBasePolygon(basePoints2, 3);
     }
     else {
-      points = getBasePolygon(basePoints3, 4);
+      points = getBasePolygon(basePoints3, 3);
     }
     pushStyle();
     noStroke();
@@ -31,10 +29,9 @@ void draw() {
     drawPolygon(points);
     popStyle();
     
-    
     pushStyle();
     pushMatrix();
-    translate(100, 100);
+    translate(60, 80);
     noStroke();
     fill(0, 0, 255, 5);
     drawPolygon(points);
@@ -43,7 +40,7 @@ void draw() {
     
     pushStyle();
     pushMatrix();
-    translate(-100, 100);
+    translate(-60, 80);
     noStroke();
     fill(0, 255, 0, 5);
     drawPolygon(points);
@@ -62,7 +59,6 @@ void draw() {
   //noFill();
   //drawPolygon(basePoints);
   //popStyle();
- 
 }
 
 void drawPolygon(ArrayList<PVector> points) {
@@ -95,12 +91,12 @@ ArrayList<PVector> deformation(ArrayList<PVector> points) {
     PVector endPoint;
     if(index == points.size()-1) endPoint = points.get(0);
     else endPoint = points.get(index+1);
+    float dis = dist(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
     PVector midPoint = PVector.div(PVector.add(startPoint, endPoint), 2);
     
-    float dis = dist(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-    float len = constrain(getRandomGaussian(0, dis/6), -dis/3, dis/3);
+    float len_loc = constrain(getRandomGaussian(0, dis/6), -dis/3, dis/3);
     PVector direction_loc = PVector.sub(endPoint, startPoint).normalize();
-    PVector loc = direction_loc.mult(len).add(midPoint);
+    PVector loc = direction_loc.mult(len_loc).add(midPoint);
     
     PVector perpendicular = PVector.sub(startPoint, endPoint).rotate(HALF_PI).normalize();
     float angle = constrain(getRandomGaussian(0, PI/3), 0, PI*2);
